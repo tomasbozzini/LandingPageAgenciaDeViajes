@@ -1,0 +1,102 @@
+---
+import '@fontsource-variable/archivo';
+import '@fontsource-variable/fraunces/full.css';
+import '@fontsource-variable/fraunces/full-italic.css';
+import '../styles/global.css';
+import { agencia } from '../data/site';
+
+interface Props {
+  titulo: string;
+  descripcion: string;
+}
+
+const { titulo, descripcion } = Astro.props;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TravelAgency',
+  name: agencia.nombre,
+  description: descripcion,
+  telephone: agencia.telefonoVisible,
+  email: agencia.email,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: agencia.direccion,
+    addressLocality: agencia.ciudad,
+    addressCountry: 'AR',
+  },
+  areaServed: 'Argentina',
+  foundingDate: String(agencia.desde),
+};
+---
+
+<!doctype html>
+<html lang="es-AR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titulo}</title>
+    <meta name="description" content={descripcion} />
+    <meta name="theme-color" content="#0E1B2C" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={descripcion} />
+    <meta property="og:locale" content="es_AR" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body class="antialiased">
+    <a
+      href="#paquetes"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-oro-alto focus:px-4 focus:py-2 focus:font-medium focus:text-noche"
+    >
+      Saltar al contenido
+    </a>
+    <slot />
+
+    <script is:inline>
+      // 1) Coreografía de entrada del hero: una sola vez, al cargar.
+      const arrancar = () => document.body.classList.add('hero-listo');
+      if (document.readyState === 'complete') requestAnimationFrame(arrancar);
+      else window.addEventListener('load', () => requestAnimationFrame(arrancar));
+
+      // 2) Gestos ligados al scroll. Un solo mecanismo — marcar el elemento
+      //    con data-visto="si" — y dos observers, porque una regla que se
+      //    dibuja y un bloque que aparece no quieren el mismo umbral: la
+      //    regla espera a estar bien dentro de la vista, el bloque tiene que
+      //    llegar ya revelado cuando lo mirás.
+      const observar = (sel, opciones) => {
+        const nodos = document.querySelectorAll(sel);
+        if (!nodos.length) return;
+        if (!('IntersectionObserver' in window)) {
+          nodos.forEach((n) => n.setAttribute('data-visto', 'si'));
+          return;
+        }
+        const obs = new IntersectionObserver((entradas) => {
+          for (const e of entradas) {
+            if (!e.isIntersecting) continue;
+            e.target.setAttribute('data-visto', 'si');
+            obs.unobserve(e.target);
+          }
+        }, opciones);
+        nodos.forEach((n) => obs.observe(n));
+      };
+
+      observar('.regla', { rootMargin: '0px 0px -12% 0px', threshold: 0.4 });
+      observar('[data-revelar]', { rootMargin: '0px 0px -10% 0px', threshold: 0.1 });
+
+      // 3) El indicador de scroll del hero se retira apenas te movés: ya
+      //    cumplió su función y quedarse sería ruido.
+      const pista = document.querySelector('[data-pista]');
+      if (pista) {
+        window.addEventListener('scroll', () => pista.setAttribute('data-ido', 'si'), {
+          once: true,
+          passive: true,
+        });
+      }
+    </script>
+  </body>
+</html>

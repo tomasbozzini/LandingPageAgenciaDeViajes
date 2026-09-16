@@ -1,0 +1,37 @@
+---
+interface Props {
+  rotulo: string;
+  titulo: string;
+  /** Segunda línea del título, en itálica y acento. Opcional. */
+  titulo2?: string;
+  intro?: string;
+  /** 'oscuro' = sección sobre fondo noche. 'claro' = sobre fondo hielo. */
+  tono?: 'oscuro' | 'claro';
+  class?: string;
+}
+
+const { rotulo, titulo, titulo2, intro, tono = 'oscuro', class: clase = '' } = Astro.props;
+
+const esClaro = tono === 'claro';
+const colorRotulo = esClaro ? 'text-oro-hondo' : 'text-oro-alto';
+const colorTitulo = esClaro ? 'text-tinta' : 'text-hielo';
+const colorAcento = esClaro ? 'text-oro-hondo' : 'text-oro-alto';
+const colorIntro = esClaro ? 'text-tinta/70' : 'text-hielo/70';
+const colorRegla = esClaro ? 'bg-oro-hondo/38' : 'bg-oro-alto/26';
+---
+
+<header class={clase} data-revelar>
+  <div class="flex items-center gap-4">
+    <span class={`rotulo ${colorRotulo}`}>{rotulo}</span>
+    <span class={`regla h-px flex-1 ${colorRegla}`}></span>
+  </div>
+
+  <h2 class={`mt-6 max-w-[19ch] text-[clamp(1.95rem,4vw,3.35rem)] font-semibold ${colorTitulo}`}>
+    {titulo}
+    {titulo2 && <span class={`block italic ${colorAcento}`}>{titulo2}</span>}
+  </h2>
+
+  {intro && <p class={`mt-5 max-w-[54ch] text-[1rem] leading-relaxed ${colorIntro}`} data-revelar style="--rev:1">{intro}</p>}
+
+  <slot />
+</header>

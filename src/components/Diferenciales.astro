@@ -1,0 +1,85 @@
+---
+import Encabezado from './Encabezado.astro';
+import { diferenciales, agencia, paquetes } from '../data/site';
+
+/* Curvas de nivel al margen: la misma marca gráfica del hero,
+   acá en versión discreta sobre fondo claro. */
+const anillos = Array.from({ length: 7 }, (_, k) => {
+  const base = 70 + k * 52;
+  const puntos: string[] = [];
+  for (let a = 0; a <= 360; a += 6) {
+    const rad = (a * Math.PI) / 180;
+    const dev =
+      Math.sin(rad * 3 + k * 0.9) * (11 + k * 2) + Math.sin(rad * 4 - k * 0.5) * (6 + k * 1.2);
+    const r = base + dev;
+    puntos.push(
+      `${puntos.length === 0 ? 'M' : 'L'}${(300 + Math.cos(rad) * r * 1.1).toFixed(1)} ${(300 + Math.sin(rad) * r * 0.9).toFixed(1)}`
+    );
+  }
+  return `${puntos.join(' ')} Z`;
+});
+
+const credenciales = [
+  { valor: `${new Date().getFullYear() - agencia.desde} años`, pie: 'operando con legajo propio' },
+  { valor: `${paquetes.length} destinos`, pie: 'que recorrimos nosotros' },
+  { valor: '24 h', pie: 'de guardia mientras viajás' },
+  { valor: agencia.legajo.replace('Legajo ', ''), pie: 'habilitación vigente' },
+];
+---
+
+<section id="nosotros" class="relative isolate overflow-hidden bg-marfil pb-24 text-tinta md:pb-32">
+  <div class="h-28 w-full bg-gradient-to-b from-noche to-marfil md:h-44" aria-hidden="true"></div>
+  <svg
+    viewBox="0 0 600 600"
+    class="pointer-events-none absolute -right-24 top-1/2 -z-10 h-[42rem] w-[42rem] -translate-y-1/2 opacity-[0.08]"
+    aria-hidden="true"
+  >
+    <g fill="none" stroke="currentColor" stroke-width="1.1">
+      {anillos.map((d) => <path d={d} />)}
+    </g>
+  </svg>
+
+  <div class="lienzo pt-10 md:pt-14">
+    <Encabezado
+      rotulo="Cómo trabajamos"
+      titulo="Más que una agencia:"
+      titulo2="una solución para tus viajes."
+      intro="Tres cosas concretas que hacemos distinto, y que se pueden verificar antes de que nos pagues un peso."
+      tono="claro"
+    />
+
+    <div class="mt-14">
+      {
+        diferenciales.map((d) => (
+          <article class="grid gap-x-10 gap-y-4 border-t border-oro-hondo/30 py-10 lg:grid-cols-12" data-revelar>
+            <div class="lg:col-span-8">
+              <h3 class="text-[clamp(1.35rem,2.4vw,1.85rem)] font-semibold text-tinta">{d.titulo}</h3>
+              <p class="mt-2 text-[1.02rem] font-medium text-oro-hondo">{d.bajada}</p>
+              <p class="mt-4 max-w-[58ch] leading-relaxed text-tinta/70">{d.texto}</p>
+            </div>
+
+            <div class="lg:col-span-4">
+              <p class="inline-flex items-start gap-2.5 border-l-2 border-oro-hondo pl-3 text-[0.86rem] font-medium leading-snug text-tinta/75">
+                {d.dato}
+              </p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+
+    <!-- Tira de credenciales -->
+    <dl class="mt-6 grid grid-cols-2 gap-x-6 gap-y-8 border-t border-oro-hondo/30 pt-10 md:grid-cols-4">
+      {
+        credenciales.map((c, i) => (
+          <div data-revelar style={`--rev:${i}`}>
+            <dt class="display cifra text-[clamp(1.3rem,2.2vw,1.75rem)] font-semibold leading-none text-tinta">
+              {c.valor}
+            </dt>
+            <dd class="mt-1.5 text-[0.82rem] leading-snug text-tinta/70">{c.pie}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>

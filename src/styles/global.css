@@ -1,0 +1,304 @@
+@import "tailwindcss";
+
+/* ============================================================
+   MERIDIANO SUR — sistema de diseno
+   Concepto: "cartografia editorial", en los colores del logotipo.
+   Navy de carta nautica, oro viejo de rosa de los vientos, papel
+   crema. Sin sombras difusas: la jerarquia se arma con capas
+   planas, hairlines y escala.
+   ============================================================ */
+
+@theme {
+  /* — Paleta —
+     Derivada del logotipo de la marca (referencias/elisa_medici_logo_hq.png):
+     navy de la tipografía, oro viejo de la rosa de los vientos, papel crema
+     del fondo. Los tres valores se muestrearon del archivo, no se eligieron
+     a ojo:
+
+       navy   #1F344F  (mediana de 40.585 píxeles del núcleo del lettering)
+       oro    #A08554  (percentil 25 del trazo de la brújula, sin antialias)
+       crema  #FEFDFB  (fondo plano del logo)
+
+     Cada rampa se construyó en OKLCH con pasos parejos de claridad, anclada
+     en esos tres valores. La marca no tiene un cuarto color: la jerarquía se
+     arma con claridad y saturación, no sumando tonos.
+
+     Jerarquía de uso, que es lo que de verdad importa:
+       · navy   = el lienzo. Fondo de la página y de las secciones oscuras.
+         Es el escenario, no el actor: deja que salten las fotos.
+       · oro    = la estructura. Rótulos, cifras, hairlines, curvas de nivel.
+         Ordena, no vende. Siempre en trazo fino o texto chico —
+         NUNCA como relleno sólido grande.
+       · crema  = el respiro. Las secciones claras que cortan el navy.
+       · CTA    = el único relleno sólido de oro de todo el sitio, y sólo
+         en los botones de WhatsApp. Esa es justamente la razón de que
+         funcione: si el oro pleno aparece decorando algo, el botón deja
+         de ser el único punto que pide un clic. */
+
+  /* Navy — OKLCH L .22/.28/.33, C ~.045, H 250.
+     `profundo` es exactamente el navy del logotipo; los otros dos son el
+     mismo tono bajado en claridad para que el fondo no compita con la foto. */
+  --color-noche: #0E1B2C;         /* Navy Hondo  — fondo de la página */
+  --color-noche-alt: #16283E;     /* Navy Alto   — superficie sobre el fondo */
+  --color-profundo: #1F344F;      /* Navy Marca  — sección intermedia */
+
+  /* Oro — OKLCH L .46/.60/.74/.86, C ~.06, H 85→80.
+     Croma contenido a propósito: un dorado saturado a escala de pantalla
+     se va a amarillo de oferta y se lleva puesta la marca.
+     `oro-alto` sobre navy; `oro-hondo` sobre las claras. */
+  --color-oro-hondo: #7A6234;     /* Oro Hondo   — rótulos y líneas sobre crema */
+  --color-oro: #A08554;           /* Oro Marca   — trazo pleno */
+  --color-oro-alto: #C9AE78;      /* Oro Alto    — rótulos y líneas sobre navy */
+  --color-oro-claro: #E4D2AC;     /* Oro Claro   — luz alta y realces */
+
+  /* CTA — reservado. Si aparece fuera de un botón, es un bug de marca. */
+  --color-cta-hondo: #8A6B32;     /* CTA Hondo   — botón sobre las secciones claras */
+  --color-cta: #C8A45C;           /* CTA         — botón sobre navy */
+  --color-cta-alto: #DFC085;      /* CTA Alto    — hover del botón */
+
+  /* Neutros. El hueso está teñido con el navy del fondo; el marfil de las
+     secciones claras es el papel del propio logotipo. */
+  --color-hielo: #EDE9E0;         /* Hueso       — texto sobre navy */
+  --color-crema: #F6ECD4;         /* Crema       — el papel del logo, usado como
+                                     tinta: reservado al logotipo del hero.
+                                     Mas calido que el hueso sin llegar al oro,
+                                     que es lo que lo mantiene legible como
+                                     neutro y no como acento. */
+  --color-marfil: #F2EDE1;        /* Marfil      — fondo de sección clara */
+  --color-marfil-alto: #FAF7EF;   /* Marfil Alto — superficie sobre marfil */
+  --color-marfil-hondo: #D9CEB8;  /* Marfil Hondo— bordes y detalle */
+  --color-tinta: #131F2E;         /* Tinta       — texto sobre marfil */
+
+  /* — Tipografia — */
+  --font-display: "Fraunces Variable", "Fraunces", ui-serif, Georgia, "Times New Roman", serif;
+  --font-sans: "Archivo Variable", "Archivo", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+
+  /* — Ritmo — */
+  --ease-sur: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --nav-h: 72px;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-noche);
+    color: var(--color-hielo);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+
+  h1, h2, h3, .display {
+    font-family: var(--font-display);
+    font-variation-settings: "SOFT" 0, "WONK" 1;
+    letter-spacing: -0.022em;
+    line-height: 0.98;
+    text-wrap: balance;
+  }
+
+  p { text-wrap: pretty; }
+
+  ::selection {
+    background: var(--color-oro-alto);
+    color: var(--color-noche);
+  }
+
+  :where(a, button, summary, input, textarea, select, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-oro-alto);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  /* Anclas: la nav sticky no tapa el titulo de la seccion */
+  section[id] { scroll-margin-top: calc(var(--nav-h) + 18px); }
+
+  dialog::backdrop { background: transparent; }
+  dialog { max-width: none; max-height: none; }
+}
+
+@layer components {
+  /* Contenedor editorial: margenes generosos, ancho de lectura controlado */
+  .lienzo {
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+    max-width: 82rem;
+  }
+  @media (min-width: 768px) { .lienzo { padding-inline: 2.5rem; } }
+  @media (min-width: 1280px) { .lienzo { padding-inline: 3.5rem; } }
+
+  /* Grano sutil: le saca el plastico al color plano */
+  .grano { position: relative; isolation: isolate; }
+  .grano::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0.28;
+    mix-blend-mode: overlay;
+    background-image:
+      radial-gradient(rgba(255,255,255,0.14) 0.5px, transparent 0.6px),
+      radial-gradient(rgba(0,0,0,0.10) 0.5px, transparent 0.6px);
+    background-size: 3px 3px, 4px 4px;
+    background-position: 0 0, 1px 2px;
+  }
+
+  /* Hairline: el unico "borde" del sistema. Nada de sombras grises. */
+  .hairline { border: 1px solid color-mix(in oklab, currentColor 16%, transparent); }
+  .hairline-b { border-bottom: 1px solid color-mix(in oklab, currentColor 16%, transparent); }
+  .hairline-t { border-top: 1px solid color-mix(in oklab, currentColor 16%, transparent); }
+
+  /* Etiqueta de seccion: serif italica, no eyebrow en mayusculas */
+  .rotulo {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.9375rem;
+    letter-spacing: 0.01em;
+    font-variation-settings: "SOFT" 0, "WONK" 1;
+  }
+
+  /* Regla que se dibuja al entrar en vista (unico gesto de scroll del sitio) */
+  .regla {
+    transform-origin: left center;
+    transform: scaleX(0);
+    transition: transform 1100ms var(--ease-sur);
+  }
+  .regla[data-visto="si"] { transform: scaleX(1); }
+
+  .cifra { font-variant-numeric: tabular-nums lining-nums; }
+}
+
+/* ============================================================
+   Secuencia de entrada del hero: una sola coreografia, al cargar.
+   Nada de fade-and-slide-up repetido en cada seccion.
+   ============================================================ */
+@layer utilities {
+  html.js [data-seq] {
+    opacity: 0;
+    will-change: opacity, transform, clip-path;
+  }
+
+  html.js body.hero-listo [data-seq] {
+    animation: sur-linea 900ms var(--ease-sur) both;
+    animation-delay: calc(var(--seq, 0) * 105ms);
+  }
+
+  html.js body.hero-listo [data-seq="lienzo"] {
+    animation: sur-lienzo 1400ms var(--ease-sur) both;
+    animation-delay: calc(var(--seq, 0) * 105ms);
+  }
+
+  @keyframes sur-linea {
+    from { opacity: 0; clip-path: inset(0 0 108% 0); transform: translateY(0.22em); }
+    to   { opacity: 1; clip-path: inset(-40% -10% -20% -10%); transform: none; }
+  }
+
+  @keyframes sur-lienzo {
+    from { opacity: 0; clip-path: inset(0 0 0 100%); }
+    to   { opacity: 1; clip-path: inset(0 0 0 0%); }
+  }
+
+  /* Revelado al entrar en vista: el mismo gesto que `.regla`, extendido a
+     bloques. Deliberadamente corto y sin escala — acompaña la lectura en
+     vez de anunciarse. El escalonado sale de `--rev`, que es el orden de
+     lectura del bloque, no su posicion en pantalla. */
+  html.js [data-revelar] {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 900ms var(--ease-sur),
+      transform 900ms var(--ease-sur);
+    transition-delay: calc(var(--rev, 0) * 90ms);
+    will-change: opacity, transform;
+  }
+
+  html.js [data-revelar][data-visto='si'] {
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+  }
+
+  /* El avion del emblema es silueta rellena, no trazo: `trazo-topo` funciona
+     con stroke-dasharray y no lo dibujaria. Entra por opacidad, justo detras
+     de que su orbita termine de trazarse. Solo opacidad a proposito: animar
+     `transform` sobre un <g> de SVG depende del `transform-origin`, que no es
+     consistente entre navegadores. */
+  html.js .avion { opacity: 0; }
+  html.js body.hero-listo .avion {
+    animation: sur-aparece 700ms var(--ease-sur) 1150ms both;
+  }
+  @keyframes sur-aparece {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* Indicador de scroll del hero. Entra y sale por transicion a proposito:
+     `[data-seq]` anima con fill `both`, y una animacion terminada le gana en
+     la cascada a una declaracion normal — el ocultado no se aplicaria nunca. */
+  html.js [data-pista] {
+    opacity: 0;
+    transition: opacity 700ms var(--ease-sur) 900ms;
+  }
+  html.js body.hero-listo [data-pista] { opacity: 1; }
+  html.js body.hero-listo [data-pista][data-ido] {
+    opacity: 0;
+    transition-delay: 0ms;
+  }
+
+  /* Latido corto del trazo, mientras la pista esta a la vista. */
+  @keyframes sur-respiro {
+    0%, 100% { transform: translateY(0); opacity: 0.55; }
+    50%      { transform: translateY(6px); opacity: 1; }
+  }
+  html.js .respiro { animation: sur-respiro 2400ms var(--ease-sur) infinite; }
+
+  /* Trazo topografico del hero */
+  .trazo-topo {
+    stroke-dasharray: var(--largo, 1400);
+    stroke-dashoffset: var(--largo, 1400);
+  }
+  html.js body.hero-listo .trazo-topo {
+    animation: sur-trazo 2600ms var(--ease-sur) both;
+    animation-delay: calc(var(--seq, 0) * 90ms);
+  }
+  @keyframes sur-trazo { to { stroke-dashoffset: 0; } }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  html.js [data-seq] { opacity: 1 !important; }
+  html.js body.hero-listo [data-seq],
+  html.js body.hero-listo [data-seq="lienzo"],
+  html.js body.hero-listo .trazo-topo {
+    animation: none !important;
+    clip-path: none !important;
+    transform: none !important;
+  }
+  .trazo-topo { stroke-dashoffset: 0 !important; }
+  html.js [data-revelar] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  html.js .respiro { animation: none !important; }
+  html.js [data-pista] { opacity: 1; transition: none !important; }
+  html.js .avion { opacity: 1; animation: none !important; }
+  .regla { transform: scaleX(1) !important; transition: none !important; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

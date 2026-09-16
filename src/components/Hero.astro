@@ -1,0 +1,201 @@
+---
+/* ============================================================
+   BIENVENIDA
+   Sólo la marca, como en el logotipo: rosa de los vientos sobre
+   el globo, "Elisa Medici" en serif y "VIAJES" espaciado abajo.
+
+   El lockup se redibuja en SVG en vez de usar el PNG: el archivo
+   original trae el fondo crema horneado y navy macizo, que sobre
+   este fondo no sirve. Vectorial va en oro, escala sin pesar y
+   entra con el mismo trazo animado que el resto del sitio.
+   ============================================================ */
+
+const R = 150; // radio del lienzo del emblema
+
+/* Rosa de los vientos: 16 vértices alternando tres radios.
+   Cardinales largos, diagonales medianas, valles cortos —
+   es lo que le da la silueta de estrella y no de asterisco. */
+const vertices = Array.from({ length: 16 }, (_, i) => {
+  const ang = (i * 22.5 - 90) * (Math.PI / 180);
+  const r = i % 4 === 0 ? 132 : i % 2 === 0 ? 58 : 20;
+  return [Math.cos(ang) * r, Math.sin(ang) * r] as [number, number];
+});
+const puntas = vertices.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`);
+
+/* El perimetro se mide, no se estima: si `--largo` queda corto, el trazo
+   se ve a medias antes de animarse. */
+const perimetro = Math.ceil(
+  vertices.reduce((total, [x, y], i) => {
+    const [px, py] = vertices[(i + 1) % vertices.length];
+    return total + Math.hypot(px - x, py - y);
+  }, 0)
+);
+
+/* Hairlines del centro a cada punta: el facetado del logo. */
+const radios = Array.from({ length: 8 }, (_, i) => {
+  const ang = (i * 45 - 90) * (Math.PI / 180);
+  const r = i % 2 === 0 ? 132 : 58;
+  return { x: Math.cos(ang) * r, y: Math.sin(ang) * r };
+});
+
+/* Paralelos del globo: elipses de radio decreciente hacia los polos. */
+const paralelos = [
+  { cy: -52, rx: 70, ry: 11 },
+  { cy: 0, rx: 86, ry: 15 },
+  { cy: 52, rx: 70, ry: 11 },
+];
+---
+
+<section
+  id="inicio"
+  class="grano relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-noche pt-[72px]"
+>
+  <!-- Halo cálido detrás del emblema -->
+  <div
+    class="pointer-events-none absolute left-1/2 top-[46%] -z-10 h-[46rem] w-[46rem] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-50 blur-3xl"
+    style="background: radial-gradient(circle, rgba(200,164,92,0.15), transparent 62%)"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="lienzo flex flex-1 flex-col items-center justify-center py-14 text-center">
+    <!-- Emblema -->
+    <svg
+      viewBox={`${-R} ${-R} ${R * 2} ${R * 2}`}
+      class="h-auto w-[clamp(8.5rem,17vw,13.5rem)]"
+      data-parallax="emblema"
+      fill="none"
+      stroke="var(--color-oro-alto)"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      role="img"
+      aria-label="Rosa de los vientos sobre un globo terráqueo"
+    >
+      <!-- Globo -->
+      <g stroke-width="1.5" opacity="0.85">
+        <circle r="86" class="trazo-topo" style="--largo:545; --seq:1" />
+        <ellipse rx="30" ry="86" class="trazo-topo" style="--largo:400; --seq:2" />
+        <ellipse rx="58" ry="86" class="trazo-topo" style="--largo:460; --seq:2" />
+        {
+          paralelos.map((p, i) => (
+            <ellipse
+              cx="0"
+              cy={p.cy}
+              rx={p.rx}
+              ry={p.ry}
+              class="trazo-topo"
+              style={`--largo:${Math.round(2 * Math.PI * p.rx)}; --seq:${3 + i}`}
+            />
+          ))
+        }
+      </g>
+
+      <!-- Rosa de los vientos -->
+      <polygon
+        points={puntas.join(' ')}
+        stroke-width="2"
+        class="trazo-topo"
+        style={`--largo:${perimetro}; --seq:5`}
+      />
+      <g stroke-width="1" opacity="0.7">
+        {
+          radios.map((p, i) => (
+            <line x1="0" y1="0" x2={p.x} y2={p.y} class="trazo-topo" style={`--largo:140; --seq:${6 + (i % 3)}`} />
+          ))
+        }
+      </g>
+      <circle r="11" stroke-width="1.6" fill="var(--color-noche)" class="trazo-topo" style="--largo:70; --seq:8" />
+
+      <!-- Avión y su órbita: el detalle de viaje del logotipo -->
+      <path
+        d="M-104 62 C-118 6 -78 -52 -18 -78 C34 -100 92 -96 122 -74"
+        stroke-width="1.2"
+        opacity="0.75"
+        class="trazo-topo"
+        style="--largo:330; --seq:9"
+      ></path>
+      <g transform="translate(120 -78) rotate(38)" fill="var(--color-oro-alto)" stroke="none" class="avion">
+        <path d="M24 0 L-4 3.2 L-18 2.6 L-21 0 L-18 -2.6 L-4 -3.2 Z" />
+        <path d="M6 -0.6 L-10 -16 L-4.5 -16 L14 -1.4 Z" />
+        <path d="M6 0.6 L-10 16 L-4.5 16 L14 1.4 Z" />
+        <path d="M-15 -0.5 L-22 -7 L-19 -7 L-12 -1 Z" />
+        <path d="M-15 0.5 L-22 7 L-19 7 L-12 1 Z" />
+      </g>
+    </svg>
+
+    <!-- Lockup tipográfico -->
+    <h1 class="mt-9 flex flex-col items-center">
+      <span
+        class="display text-[clamp(2.6rem,8vw,5.6rem)] font-light leading-[0.95] text-crema"
+        data-seq
+        style="--seq:11"
+      >
+        Elisa Medici
+      </span>
+      {/* `text-indent` compensa el tracking que sobra despues de la ultima
+          letra: sin eso el bloque queda matematica pero no opticamente centrado. */}
+      <span
+        class="mt-4 text-[clamp(0.85rem,2.1vw,1.35rem)] font-medium text-oro-alto"
+        style="--seq:12; letter-spacing: 0.52em; text-indent: 0.52em"
+        data-seq
+      >VIAJES</span>
+    </h1>
+  </div>
+
+  <!-- Pista de scroll: se retira sola apenas te movés (ver Base.astro). -->
+  <div class="pointer-events-none pb-10 text-center" data-pista aria-hidden="true">
+    <span class="respiro mx-auto block h-10 w-px bg-gradient-to-b from-transparent to-oro-alto/70"></span>
+  </div>
+</section>
+
+
+<script>
+  /* Paralaje suave del emblema: responde al puntero, no al scroll.
+     Movimiento con causa: lo dispara el usuario. Amplitud corta —
+     es la marca, no un objeto flotante. */
+  const sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const hero = document.getElementById('inicio');
+  const emblema = document.querySelector<HTMLElement>('[data-parallax="emblema"]');
+
+  if (hero && emblema && !sinMovimiento.matches && window.matchMedia('(pointer: fine)').matches) {
+    let crudoX = 0;
+    let crudoY = 0;
+    let x = 0;
+    let y = 0;
+    let animando = false;
+
+    const cuadro = () => {
+      x += (crudoX - x) * 0.075;
+      y += (crudoY - y) * 0.075;
+      emblema.style.transform = `translate3d(${x * 12}px, ${y * 8}px, 0)`;
+      if (Math.abs(crudoX - x) > 0.001 || Math.abs(crudoY - y) > 0.001) {
+        requestAnimationFrame(cuadro);
+      } else {
+        animando = false;
+      }
+    };
+
+    const empujar = () => {
+      if (animando) return;
+      animando = true;
+      requestAnimationFrame(cuadro);
+    };
+
+    hero.addEventListener(
+      'pointermove',
+      (e) => {
+        const r = hero.getBoundingClientRect();
+        crudoX = (e.clientX - r.left) / r.width - 0.5;
+        crudoY = (e.clientY - r.top) / r.height - 0.5;
+        empujar();
+      },
+      { passive: true }
+    );
+
+    hero.addEventListener('pointerleave', () => {
+      crudoX = 0;
+      crudoY = 0;
+      empujar();
+    });
+  }
+</script>

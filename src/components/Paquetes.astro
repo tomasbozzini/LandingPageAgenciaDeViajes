@@ -1,0 +1,141 @@
+---
+import Escenario from './Escenario.tsx';
+import { linkWhatsapp, mensajes, paquetes } from '../data/site';
+
+/* ============================================================
+   PAQUETES
+   Tarjetas: seis viajes armados, con la descripción a la vista.
+   Se muestran los marcados `destacado` en site.ts — para cambiar
+   la selección se mueve ese flag, no este archivo.
+
+   El día a día vive en un <details>: la descripción se lee de
+   corrido y el itinerario está a un clic, sin modal ni JS.
+   ============================================================ */
+
+const destacados = paquetes.filter((p) => p.destacado);
+
+const precio = (n: number) => n.toLocaleString('es-AR');
+---
+
+<div class="mt-14 grid gap-7 md:mt-16 md:grid-cols-2 md:gap-8">
+  {
+    destacados.map((p, i) => (
+      <article
+        class="tarjeta group flex flex-col overflow-hidden rounded-xl border border-oro-alto/18 bg-noche-alt/45 transition-colors duration-500 hover:border-oro-alto/45"
+        data-revelar
+        style={`--rev:${i % 2}`}
+      >
+        <div class="relative aspect-[16/10] overflow-hidden">
+          <Escenario
+            escena={p.escena}
+            foto={p.foto}
+            className="absolute inset-0 h-full w-full transition-transform duration-[1200ms] ease-out group-hover:scale-[1.04]"
+          />
+          <p class="cifra absolute right-4 top-4 rounded-full bg-noche/75 px-3 py-1.5 text-[0.7rem] font-medium text-hielo backdrop-blur-sm">
+            {p.noches} noches
+          </p>
+        </div>
+
+        <div class="flex flex-1 flex-col p-6 md:p-7">
+          <p class="rotulo text-oro-alto">{p.destino}</p>
+
+          <h3 class="display mt-2 text-[clamp(1.3rem,2vw,1.6rem)] font-semibold leading-tight text-hielo">
+            {p.nombre}
+          </h3>
+
+          <p class="mt-3 text-[0.95rem] italic leading-snug text-oro-claro/85">{p.gancho}</p>
+
+          <p class="mt-4 text-[0.92rem] leading-relaxed text-hielo/70">{p.resumen}</p>
+
+          <details class="detalle mt-5 border-t border-oro-alto/16 pt-4">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-3 text-[0.85rem] font-medium text-oro-alto transition-colors duration-300 hover:text-oro-claro">
+              Ver el día a día y qué incluye
+              <span class="flecha text-[0.9rem] leading-none" aria-hidden="true">
+                ↓
+              </span>
+            </summary>
+
+            <ol class="mt-5 space-y-4">
+              {p.itinerario.map((t) => (
+                <li class="border-l border-oro-alto/28 pl-4">
+                  <p class="cifra text-[0.72rem] font-medium text-oro-alto">{t.dia}</p>
+                  <p class="mt-0.5 text-[0.9rem] font-medium text-hielo">{t.titulo}</p>
+                  <p class="mt-1 text-[0.85rem] leading-relaxed text-hielo/65">{t.detalle}</p>
+                </li>
+              ))}
+            </ol>
+
+            <div class="mt-6 grid gap-5 sm:grid-cols-2">
+              <div>
+                <p class="rotulo text-oro-alto">Incluye</p>
+                <ul class="mt-2 space-y-1.5">
+                  {p.incluye.map((x) => (
+                    <li class="text-[0.83rem] leading-snug text-hielo/70">{x}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p class="rotulo text-oro-alto">No incluye</p>
+                <ul class="mt-2 space-y-1.5">
+                  {p.noIncluye.map((x) => (
+                    <li class="text-[0.83rem] leading-snug text-hielo/70">{x}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {p.nota && (
+              <p class="mt-5 border-l-2 border-oro-alto/50 pl-3 text-[0.82rem] leading-snug text-hielo/65">
+                {p.nota}
+              </p>
+            )}
+          </details>
+
+          {/* `mt-auto` empuja el pie al fondo: las tarjetas de una fila
+              terminan alineadas aunque las descripciones midan distinto. */}
+          <div class="mt-auto pt-6">
+            <div class="flex items-end justify-between gap-4 border-t border-oro-alto/16 pt-5">
+              <div>
+                <p class="text-[0.7rem] text-hielo/55">Desde, por persona</p>
+                <p class="cifra display mt-0.5 text-[1.45rem] font-semibold leading-none text-hielo">
+                  USD {precio(p.desde)}
+                </p>
+              </div>
+              <a
+                href={linkWhatsapp(mensajes.paquete(p.nombre))}
+                target="_blank"
+                rel="noopener"
+                class="inline-flex shrink-0 items-center rounded-full bg-cta px-5 py-2.5 text-[0.85rem] font-semibold text-noche transition-colors duration-300 hover:bg-cta-alto"
+              >
+                Consultar
+              </a>
+            </div>
+            <p class="mt-3 text-[0.75rem] leading-snug text-hielo/55">{p.salidas}</p>
+          </div>
+        </div>
+      </article>
+    ))
+  }
+</div>
+
+<style>
+  /* Quita el triangulito nativo del <details> en todos los motores. */
+  .detalle summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .detalle[open] .flecha {
+    transform: rotate(180deg);
+  }
+
+  .flecha {
+    display: inline-block;
+    transition: transform 300ms var(--ease-sur);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flecha {
+      transition: none;
+    }
+  }
+</style>

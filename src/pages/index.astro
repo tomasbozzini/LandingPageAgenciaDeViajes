@@ -1,0 +1,51 @@
+---
+import Base from '../layouts/Base.astro';
+import Navegacion from '../components/Navegacion.astro';
+import Hero from '../components/Hero.astro';
+import Encabezado from '../components/Encabezado.astro';
+import Paquetes from '../components/Paquetes.astro';
+import Vitrina from '../components/Vitrina.astro';
+import Diferenciales from '../components/Diferenciales.astro';
+import Contacto from '../components/Contacto.astro';
+import Pie from '../components/Pie.astro';
+import { agencia, paquetes, regiones } from '../data/site';
+
+const cantidad = paquetes.length;
+const cantidadRegiones = regiones.length - 1;
+---
+
+<Base
+  titulo={`${agencia.nombre} — viajes armados por gente que los caminó`}
+  descripcion="Agencia de viajes con legajo propio. Paquetes por la Patagonia, el norte argentino, el Litoral, Sudamérica, el Caribe, Europa, Asia y África, cotizados con el desglose de precios a la vista y guardia por WhatsApp mientras viajás."
+>
+  <Navegacion />
+
+  <main>
+    <!-- 01 — Bienvenida: sólo la marca -->
+    <Hero />
+
+    <!-- 02 — Paquetes: lo primero que aparece al bajar -->
+    <section id="paquetes" class="bg-noche py-24 md:py-32">
+      <div class="lienzo">
+        <Encabezado
+          rotulo="Paquetes"
+          titulo="Los viajes que ya"
+          titulo2="tenemos armados."
+          intro={`Seis viajes armados, con el aéreo incluido y el precio por persona en base doble. Abrí cualquiera y vas a ver el día por día, qué entra y qué no. Tenemos ${cantidad} destinos en total repartidos en ${cantidadRegiones} regiones: si ninguno te cierra, lo armamos de cero.`}
+        />
+        <Paquetes />
+      </div>
+    </section>
+
+    <!-- 03 — Vitrina: destinos y cifras, después de los paquetes -->
+    <Vitrina />
+
+    <!-- 04 — Cómo trabajamos (marfil, con transición degradada propia) -->
+    <Diferenciales />
+
+    <!-- 05 — Contacto (marfil, con transición degradada propia) -->
+    <Contacto />
+  </main>
+
+  <Pie />
+</Base>

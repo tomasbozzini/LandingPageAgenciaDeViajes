@@ -1,0 +1,172 @@
+---
+import Escenario from './Escenario.tsx';
+import { datosHero, destinosHero } from '../data/site';
+
+/* Destinos y cifras duras. Van después de los paquetes: la bienvenida es
+   sólo la marca, así que lo primero que tiene que aparecer al bajar es el
+   catálogo, y esto queda como respaldo de lo que se acaba de ver. Entran
+   escalonados con `data-revelar`. */
+---
+
+<section id="vitrina" class="bg-noche pb-24 pt-4 md:pb-32 md:pt-8">
+  <div class="lienzo">
+    <div class="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
+      <!-- Panel de destinos -->
+      <div class="lg:col-span-5" data-revelar>
+        <figure class="relative mx-auto max-w-[24rem] lg:max-w-none">
+          <div
+            class="relative aspect-[4/5] overflow-hidden rounded-t-[13rem] rounded-b-lg border border-oro-alto/20"
+            data-rotador
+          >
+            {
+              destinosHero.map((d, i) => (
+                <div
+                  class="destino absolute inset-0"
+                  data-activo={i === 0 ? '' : null}
+                  aria-hidden={i === 0 ? 'false' : 'true'}
+                >
+                  <Escenario
+                    escena={d.escena}
+                    foto={d.foto}
+                    prioridad={i === 0}
+                    className="absolute inset-0 h-full w-full"
+                  />
+                  <div class="absolute inset-x-0 bottom-0 p-5">
+                    <div class="flex items-end justify-between gap-4 border-t border-oro-alto/32 pt-3">
+                      <div>
+                        <p class="display text-[1.1rem] font-semibold text-hielo">{d.lugar}</p>
+                        <p class="text-[0.74rem] text-hielo/70">{d.zona}</p>
+                      </div>
+                      <p class="cifra text-right text-[0.74rem] leading-tight text-hielo/70">
+                        {d.coordenadas[0]}
+                        <br />
+                        {d.coordenadas[1]}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+
+          <!-- Controles: además de marcar en qué destino va, dejan
+               elegirlo a mano si la rotación no acompaña. -->
+          <figcaption class="mt-4 flex items-center justify-end gap-2">
+            {
+              destinosHero.map((d, i) => (
+                <button
+                  type="button"
+                  data-punto
+                  aria-current={i === 0 ? 'true' : 'false'}
+                  class="punto h-2.5 w-7 rounded-full transition-colors duration-300"
+                >
+                  <span class="sr-only">Ver {d.lugar}</span>
+                </button>
+              ))
+            }
+          </figcaption>
+        </figure>
+      </div>
+
+      <!-- Cifras: entran de a una, en orden de lectura -->
+      <div class="lg:col-span-7">
+        <dl class="grid grid-cols-1 gap-x-10 gap-y-9 sm:grid-cols-2">
+          {
+            datosHero.map((d, i) => (
+              <div
+                class="flex flex-col gap-1.5 border-t border-oro-alto/16 pt-5"
+                data-revelar
+                style={`--rev:${i + 1}`}
+              >
+                <dt class="display cifra text-[clamp(1.9rem,3vw,2.6rem)] font-semibold leading-none text-hielo">
+                  {d.valor}
+                  <span class="ml-1.5 align-baseline font-sans text-[0.72rem] font-medium tracking-wide text-oro-alto">
+                    {d.unidad}
+                  </span>
+                </dt>
+                <dd class="max-w-[26ch] text-[0.82rem] leading-snug text-hielo/70">{d.pie}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Rotador del panel: cruce por opacidad, sin desplazamientos que
+     compitan con el revelado de entrada. */
+  .destino {
+    opacity: 0;
+    transition: opacity 900ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .destino[data-activo] {
+    opacity: 1;
+  }
+
+  .punto {
+    background: color-mix(in srgb, var(--color-oro-alto) 34%, transparent);
+  }
+
+  .punto:hover {
+    background: color-mix(in srgb, var(--color-oro-alto) 68%, transparent);
+  }
+
+  .punto[aria-current='true'] {
+    background: var(--color-oro-alto);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .destino {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  /* Rotación de destinos del panel. Se frena con la pestaña oculta y
+     no arranca sola si el sistema pide menos movimiento: ahí quedan
+     los botones para cambiar a mano. */
+  const rotador = document.querySelector<HTMLElement>('[data-rotador]');
+  const puntos = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-punto]'));
+
+  if (rotador && puntos.length > 1) {
+    const destinos = Array.from(rotador.querySelectorAll<HTMLElement>('.destino'));
+    const quieto = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let actual = 0;
+    let reloj: ReturnType<typeof setInterval> | undefined;
+
+    const mostrar = (i: number) => {
+      actual = (i + destinos.length) % destinos.length;
+      destinos.forEach((d, k) => {
+        d.toggleAttribute('data-activo', k === actual);
+        d.setAttribute('aria-hidden', k === actual ? 'false' : 'true');
+      });
+      puntos.forEach((p, k) => p.setAttribute('aria-current', k === actual ? 'true' : 'false'));
+    };
+
+    const frenar = () => {
+      if (reloj) clearInterval(reloj);
+      reloj = undefined;
+    };
+
+    const arrancar = () => {
+      frenar();
+      if (quieto.matches) return;
+      reloj = setInterval(() => mostrar(actual + 1), 5200);
+    };
+
+    puntos.forEach((p, k) =>
+      p.addEventListener('click', () => {
+        mostrar(k);
+        arrancar();
+      })
+    );
+
+    document.addEventListener('visibilitychange', () => (document.hidden ? frenar() : arrancar()));
+    quieto.addEventListener('change', arrancar);
+    arrancar();
+  }
+</script>
