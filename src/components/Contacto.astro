@@ -7,7 +7,6 @@ const wa = linkWhatsapp(mensajes.general);
 const datos = [
   { rotulo: 'Teléfono', valor: agencia.telefonoVisible, href: `tel:${agencia.telefonoVisible.replace(/[^+\d]/g, '')}` },
   { rotulo: 'Correo', valor: agencia.email, href: `mailto:${agencia.email}` },
-  { rotulo: 'Oficina', valor: `${agencia.direccion}, ${agencia.ciudad}` },
   { rotulo: 'Atención', valor: agencia.horarios },
 ];
 

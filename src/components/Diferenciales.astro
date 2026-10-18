@@ -1,6 +1,6 @@
 ---
 import Encabezado from './Encabezado.astro';
-import { diferenciales, agencia, paquetes } from '../data/site';
+import { diferenciales } from '../data/site';
 
 /* Curvas de nivel al margen: la misma marca gráfica del hero,
    acá en versión discreta sobre fondo claro. */
@@ -18,13 +18,6 @@ const anillos = Array.from({ length: 7 }, (_, k) => {
   }
   return `${puntos.join(' ')} Z`;
 });
-
-const credenciales = [
-  { valor: `${new Date().getFullYear() - agencia.desde} años`, pie: 'operando con legajo propio' },
-  { valor: `${paquetes.length} destinos`, pie: 'que recorrimos nosotros' },
-  { valor: '24 h', pie: 'de guardia mientras viajás' },
-  { valor: agencia.legajo.replace('Legajo ', ''), pie: 'habilitación vigente' },
-];
 ---
 
 <section id="nosotros" class="relative isolate overflow-hidden bg-marfil pb-24 text-tinta md:pb-32">
@@ -44,7 +37,7 @@ const credenciales = [
       rotulo="Cómo trabajamos"
       titulo="Más que una agencia:"
       titulo2="una solución para tus viajes."
-      intro="Tres cosas concretas que hacemos distinto, y que se pueden verificar antes de que nos pagues un peso."
+      intro="Dos cosas concretas que hacemos distinto, y que se pueden verificar antes de que nos pagues un peso."
       tono="claro"
     />
 
@@ -67,19 +60,5 @@ const credenciales = [
         ))
       }
     </div>
-
-    <!-- Tira de credenciales -->
-    <dl class="mt-6 grid grid-cols-2 gap-x-6 gap-y-8 border-t border-oro-hondo/30 pt-10 md:grid-cols-4">
-      {
-        credenciales.map((c, i) => (
-          <div data-revelar style={`--rev:${i}`}>
-            <dt class="display cifra text-[clamp(1.3rem,2.2vw,1.75rem)] font-semibold leading-none text-tinta">
-              {c.valor}
-            </dt>
-            <dd class="mt-1.5 text-[0.82rem] leading-snug text-tinta/70">{c.pie}</dd>
-          </div>
-        ))
-      }
-    </dl>
   </div>
 </section>

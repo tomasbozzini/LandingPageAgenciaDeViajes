@@ -8,15 +8,12 @@ import Vitrina from '../components/Vitrina.astro';
 import Diferenciales from '../components/Diferenciales.astro';
 import Contacto from '../components/Contacto.astro';
 import Pie from '../components/Pie.astro';
-import { agencia, paquetes, regiones } from '../data/site';
-
-const cantidad = paquetes.length;
-const cantidadRegiones = regiones.length - 1;
+import { agencia } from '../data/site';
 ---
 
 <Base
-  titulo={`${agencia.nombre} — viajes armados por gente que los caminó`}
-  descripcion="Agencia de viajes con legajo propio. Paquetes por la Patagonia, el norte argentino, el Litoral, Sudamérica, el Caribe, Europa, Asia y África, cotizados con el desglose de precios a la vista y guardia por WhatsApp mientras viajás."
+  titulo={`${agencia.nombre} — viajes armados a medida`}
+  descripcion="Agencia de viajes. Viajes a medida por Argentina y el mundo, cotizados con el desglose de precios a la vista y guardia por WhatsApp mientras viajás."
 >
   <Navegacion />
 
@@ -29,9 +26,9 @@ const cantidadRegiones = regiones.length - 1;
       <div class="lienzo">
         <Encabezado
           rotulo="Paquetes"
-          titulo="Los viajes que ya"
-          titulo2="tenemos armados."
-          intro={`Seis viajes armados, con el aéreo incluido y el precio por persona en base doble. Abrí cualquiera y vas a ver el día por día, qué entra y qué no. Tenemos ${cantidad} destinos en total repartidos en ${cantidadRegiones} regiones: si ninguno te cierra, lo armamos de cero.`}
+          titulo="Los primeros viajes,"
+          titulo2="en preparación."
+          intro="Estamos armando los paquetes. Cada uno va a tener el día por día, qué entra y qué no, y el precio por persona a la vista."
         />
         <Paquetes />
       </div>

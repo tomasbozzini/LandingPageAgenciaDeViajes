@@ -1,18 +1,30 @@
 ---
 import Escenario from './Escenario.tsx';
-import { linkWhatsapp, mensajes, paquetes } from '../data/site';
+import { linkWhatsapp, mensajes, paquetes, type Escena } from '../data/site';
 
 /* ============================================================
    PAQUETES
-   Tarjetas: seis viajes armados, con la descripción a la vista.
-   Se muestran los marcados `destacado` en site.ts — para cambiar
-   la selección se mueve ese flag, no este archivo.
+   Tarjetas: seis lugares en la grilla. Se muestran los marcados
+   `destacado` en site.ts — para cambiar la selección se mueve ese
+   flag, no este archivo. Los lugares que sobran se llenan con
+   tarjetas vacías: la agencia recién arranca y todavía no hay
+   paquetes cargados, pero la grilla ya tiene su forma.
 
    El día a día vive en un <details>: la descripción se lee de
    corrido y el itinerario está a un clic, sin modal ni JS.
    ============================================================ */
 
-const destacados = paquetes.filter((p) => p.destacado);
+const LUGARES = 6;
+
+const destacados = paquetes.filter((p) => p.destacado).slice(0, LUGARES);
+
+/* Cada lugar vacío lleva una ilustración distinta, para que la grilla
+   no se lea como seis copias del mismo bloque. */
+const escenasVacias: Escena[] = ['glaciar', 'montana', 'selva', 'costa', 'ciudad', 'puna'];
+const vacios = Array.from(
+  { length: LUGARES - destacados.length },
+  (_, i) => escenasVacias[i % escenasVacias.length]
+);
 
 const precio = (n: number) => n.toLocaleString('es-AR');
 ---
@@ -116,7 +128,61 @@ const precio = (n: number) => n.toLocaleString('es-AR');
       </article>
     ))
   }
+
+  {
+    vacios.map((escena, i) => (
+      <article
+        class="flex flex-col overflow-hidden rounded-xl border border-dashed border-oro-alto/22 bg-noche-alt/30"
+        data-revelar
+        style={`--rev:${(destacados.length + i) % 2}`}
+      >
+        <h3 class="sr-only">Paquete en preparación</h3>
+
+        <div class="relative aspect-[16/10] overflow-hidden">
+          <Escenario escena={escena} className="absolute inset-0 h-full w-full opacity-40" />
+          <p class="absolute right-4 top-4 rounded-full bg-noche/75 px-3 py-1.5 text-[0.7rem] font-medium text-hielo/80 backdrop-blur-sm">
+            Próximamente
+          </p>
+        </div>
+
+        {/* Renglones vacíos con la misma silueta que una tarjeta cargada:
+            rótulo, título, descripción y pie con precio y botón. */}
+        <div class="flex flex-1 flex-col p-6 md:p-7" aria-hidden="true">
+          <span class="block h-2.5 w-28 rounded-full bg-oro-alto/20" />
+          <span class="mt-4 block h-5 w-3/4 rounded-full bg-hielo/10" />
+          <span class="mt-6 block h-2.5 w-full rounded-full bg-hielo/[0.07]" />
+          <span class="mt-2.5 block h-2.5 w-11/12 rounded-full bg-hielo/[0.07]" />
+          <span class="mt-2.5 block h-2.5 w-2/3 rounded-full bg-hielo/[0.07]" />
+
+          <div class="mt-auto pt-8">
+            <div class="flex items-end justify-between gap-4 border-t border-oro-alto/16 pt-5">
+              <span class="block h-6 w-28 rounded-full bg-hielo/10" />
+              <span class="block h-10 w-28 rounded-full border border-oro-alto/20" />
+            </div>
+          </div>
+        </div>
+      </article>
+    ))
+  }
 </div>
+
+{
+  vacios.length > 0 && (
+    <div class="mt-12 flex flex-col items-start gap-5 border-t border-oro-alto/16 pt-8 sm:flex-row sm:items-center sm:justify-between">
+      <p class="max-w-[48ch] text-[0.95rem] leading-relaxed text-hielo/70">
+        Mientras terminamos de armar los paquetes, contanos a dónde querés ir y lo cotizamos a medida.
+      </p>
+      <a
+        href={linkWhatsapp(mensajes.aMedida)}
+        target="_blank"
+        rel="noopener"
+        class="inline-flex shrink-0 items-center rounded-full bg-cta px-6 py-3 text-[0.9rem] font-semibold text-noche transition-colors duration-300 hover:bg-cta-alto"
+      >
+        Armar mi viaje
+      </a>
+    </div>
+  )
+}
 
 <style>
   /* Quita el triangulito nativo del <details> en todos los motores. */

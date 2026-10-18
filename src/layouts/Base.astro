@@ -19,14 +19,7 @@ const jsonLd = {
   description: descripcion,
   telephone: agencia.telefonoVisible,
   email: agencia.email,
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: agencia.direccion,
-    addressLocality: agencia.ciudad,
-    addressCountry: 'AR',
-  },
   areaServed: 'Argentina',
-  foundingDate: String(agencia.desde),
 };
 ---
 
