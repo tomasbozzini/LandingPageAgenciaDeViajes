@@ -9,12 +9,36 @@ import Diferenciales from '../components/Diferenciales.astro';
 import Contacto from '../components/Contacto.astro';
 import Pie from '../components/Pie.astro';
 import { agencia } from '../data/site';
+
+const titulo = `${agencia.nombre} | Agencia de viajes en ${agencia.ciudad}`;
+const descripcion = `${agencia.nombre} es una agencia de viajes que arma viajes a medida por Argentina y el mundo, con el desglose de precios a la vista y guardia por WhatsApp mientras viajás.`;
+
+/* Datos estructurados (schema.org/TravelAgency). Sólo datos que el sitio
+   ya muestra: la dirección es la ciudad, sin calle (no hay local). */
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TravelAgency',
+  name: agencia.nombre,
+  url: new URL('/', Astro.site).href,
+  description: descripcion,
+  logo: new URL('/og-elisa-medici-viajes.jpg', Astro.site).href,
+  image: new URL('/og-elisa-medici-viajes.jpg', Astro.site).href,
+  telephone: `+${agencia.whatsapp}`,
+  email: agencia.email,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: agencia.ciudad,
+    addressRegion: agencia.provincia,
+    addressCountry: agencia.pais,
+  },
+  areaServed: 'Argentina',
+  sameAs: [agencia.instagramUrl],
+};
 ---
 
-<Base
-  titulo={`${agencia.nombre} — viajes armados a medida`}
-  descripcion="Agencia de viajes. Viajes a medida por Argentina y el mundo, cotizados con el desglose de precios a la vista y guardia por WhatsApp mientras viajás."
->
+<Base titulo={titulo} descripcion={descripcion}>
+  <script slot="head" is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
   <Navegacion />
 
   <main>

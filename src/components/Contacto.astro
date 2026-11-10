@@ -5,9 +5,11 @@ import { agencia, linkWhatsapp, mensajes } from '../data/site';
 const wa = linkWhatsapp(mensajes.general);
 
 const datos = [
-  { rotulo: 'Teléfono', valor: agencia.telefonoVisible, href: `tel:${agencia.telefonoVisible.replace(/[^+\d]/g, '')}` },
+  // El único número de la agencia es el celular del WhatsApp: no hay fijo.
+  { rotulo: 'WhatsApp', valor: agencia.telefonoVisible, href: wa, externo: true },
   { rotulo: 'Correo', valor: agencia.email, href: `mailto:${agencia.email}` },
   { rotulo: 'Atención', valor: agencia.horarios },
+  { rotulo: 'Ciudad', valor: `${agencia.ciudad}, provincia de ${agencia.provincia}` },
 ];
 
 const paraCotizar = [
@@ -57,7 +59,12 @@ const paraCotizar = [
                 <dt class="text-[0.76rem] text-tinta/70">{d.rotulo}</dt>
                 <dd class="mt-1 text-[0.98rem] leading-snug text-tinta/85">
                   {d.href ? (
-                    <a href={d.href} class="transition-colors duration-300 hover:text-oro-hondo">
+                    <a
+                      href={d.href}
+                      target={d.externo ? '_blank' : undefined}
+                      rel={d.externo ? 'noopener' : undefined}
+                      class="transition-colors duration-300 hover:text-oro-hondo"
+                    >
                       {d.valor}
                     </a>
                   ) : (

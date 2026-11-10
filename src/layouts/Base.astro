@@ -12,15 +12,13 @@ interface Props {
 
 const { titulo, descripcion } = Astro.props;
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'TravelAgency',
-  name: agencia.nombre,
-  description: descripcion,
-  telephone: agencia.telefonoVisible,
-  email: agencia.email,
-  areaServed: 'Argentina',
-};
+/* URL canónica: la ruta de la página sobre el dominio definido en
+   `site` (astro.config.mjs), así nunca apunta a un deploy de prueba. */
+const canonica = new URL(Astro.url.pathname, Astro.site).href;
+
+/* Imagen para compartir: el logo sobre crema, 1200×630 (generada desde
+   referencias/elisa_medici_logo_hq.png). */
+const imagenSocial = new URL('/og-elisa-medici-viajes.jpg', Astro.site).href;
 ---
 
 <!doctype html>
@@ -30,16 +28,25 @@ const jsonLd = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{titulo}</title>
     <meta name="description" content={descripcion} />
+    <link rel="canonical" href={canonica} />
     <meta name="theme-color" content="#0E1B2C" />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={agencia.nombre} />
     <meta property="og:title" content={titulo} />
     <meta property="og:description" content={descripcion} />
+    <meta property="og:url" content={canonica} />
+    <meta property="og:image" content={imagenSocial} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`Logo de ${agencia.nombre}`} />
     <meta property="og:locale" content="es_AR" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script is:inline>
       document.documentElement.classList.add('js');
     </script>
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <!-- Extras por página (p. ej. datos estructurados de la home) -->
+    <slot name="head" />
   </head>
   <body class="antialiased">
     <a

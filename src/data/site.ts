@@ -2,7 +2,6 @@
    CONTENIDO DEL SITIO
    Todo lo editable vive acá. No hay base de datos ni backend:
    se cambia este archivo, se vuelve a buildear y listo.
-   Los campos marcados con  // <-- REEMPLAZAR  son de ejemplo.
 
    FOTOS: están en /public/fotos y son placeholders de Wikimedia
    Commons (ver public/fotos/CREDITOS.md). Hay que cambiarlas por
@@ -17,13 +16,17 @@ export type Escena =
 export const agencia = {
   nombre: 'Elisa Medici Viajes',
   descriptor: 'Agencia de viajes',
-  whatsapp: '5492494567890',                   // <-- REEMPLAZAR (internacional, sin + ni espacios)
-  telefonoVisible: '+54 249 456-7890',         // <-- REEMPLAZAR
-  email: 'hola@meridianosur.com.ar',           // <-- REEMPLAZAR
+  whatsapp: '5491151103146',                   // internacional, sin + ni espacios (para wa.me)
+  telefonoVisible: '+54 9 11 5110-3146',       // es el mismo celular del WhatsApp; no hay fijo
+  email: 'emediciviajes@gmail.com',
+  /* Sólo ciudad: no hay dirección de calle (la agencia no tiene local). */
+  ciudad: 'Tandil',
+  provincia: 'Buenos Aires',
+  pais: 'AR',                                  // ISO 3166-1, para los datos estructurados
   horarios: 'Lunes a viernes de 9 a 18 h. Sábados de 9 a 13 h.',
   guardia: 'Guardia por WhatsApp las 24 h mientras estás de viaje.',
-  instagram: '@meridianosur.viajes',           // <-- REEMPLAZAR
-  instagramUrl: 'https://instagram.com/',      // <-- REEMPLAZAR
+  instagram: '@elisamediciviajes',
+  instagramUrl: 'https://instagram.com/elisamediciviajes',
 };
 
 /** Arma un link de WhatsApp con el mensaje ya escrito. */

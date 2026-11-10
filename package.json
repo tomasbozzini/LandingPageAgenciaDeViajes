@@ -1,5 +1,5 @@
 {
-  "name": "meridiano-sur",
+  "name": "elisa-medici-viajes",
   "type": "module",
   "version": "1.0.0",
   "private": true,
@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",
+    "@astrojs/sitemap": "3.7.0",
     "@fontsource-variable/archivo": "^5.3.0",
     "@fontsource-variable/fraunces": "^5.3.0",
     "@tailwindcss/vite": "^4.3.3",
